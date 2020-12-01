@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fxf.blogbs.dao.BlogMapper">
+    <resultMap id="blog" type="com.fxf.blogbs.pojo.Blog">
+        <id column="blog_id" property="blogId"/>
+        <result column="user_id" property="userId"/>
+        <result column="blog_title" property="blogTitle"/>
+        <result column="blog_content" property="blogContent"/>
+        <result column="blog_photo" property="blogPhoto"/>
+        <result column="blog_date" property="blogDate"/>
+        <result column="sort_id" property="sortId"/>
+        <association property="sort" javaType="com.fxf.blogbs.pojo.Sort">
+            <id column="sort_id" property="sortId"/>
+            <result column="sort_name" property="sortName"/>
+        </association>
+        <association property="user" javaType="com.fxf.blogbs.pojo.User">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="user_password" property="userPassword"/>
+            <result column="user_profile_photo" property="userProfilePhoto"/>
+            <result column="user_admin" property="userAdmin"/>
+        </association>
+    </resultMap>
+    <select id="queryAllBlog" resultMap="blog">
+        SELECT b.*,s.sort_name,u.user_name
+        FROM blog b,sort s,user u
+        WHERE b.sort_id=s.sort_id AND b.user_id=u.user_id
+    </select>
+
+    <select id="findBlogById" resultMap="blog">
+        SELECT b.*,s.sort_name,u.user_name
+        FROM blog b,sort s,user u
+        WHERE b.sort_id=s.sort_id AND b.user_id=u.user_id
+        AND blog_id=#{blogId}
+    </select>
+
+    <select id="findBlogByTitle" resultMap="blog">
+        SELECT b.*,s.sort_name,u.user_name
+        FROM blog b,sort s,user u
+        WHERE b.sort_id=s.sort_id AND b.user_id=u.user_id
+        AND  blog_title  LIKE CONCAT('%',#{blogTitle},'%')
+    </select>
+
+    <select id="findBlogBySort" resultMap="blog">
+        SELECT b.*,s.sort_name,u.user_name
+        FROM blog b,sort s,user u
+        WHERE b.sort_id=s.sort_id AND b.user_id=u.user_id
+        AND b.sort_id=#{sortId}
+    </select>
+
+    <select id="findNewBlog" resultType="com.fxf.blogbs.pojo.Blog">
+        SELECT b.*,s.sort_name,u.user_name
+        FROM blog b,sort s,user u
+        WHERE b.sort_id=s.sort_id AND b.user_id=u.user_id
+        ORDER BY blog_date DESC LIMIT 5
+    </select>
+    <update id="updateBlog" parameterType="com.fxf.blogbs.pojo.Blog">
+        UPDATE blog
+        SET blog_photo=#{blogPhoto}, sort_id=#{sortId}, blog_date=#{blogDate}, blog_content=#{blogContent}, user_id=#{userId}, blog_title=#{blogTitle}  WHERE blog_id=#{blogId}
+    </update>
+</mapper>
+
